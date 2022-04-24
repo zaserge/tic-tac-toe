@@ -192,7 +192,7 @@ def robot_turn() -> int:
 
     # make choice to random free cell
 
-    # TODO: не ставить если есть в линии враги
+    # TODO: не ставить если есть в линии враги  # pylint: disable=fixme
 
     # TODO: играть по стратегии "победа или ничья"
 
