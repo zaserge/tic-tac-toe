@@ -39,7 +39,7 @@ table = {7: EMPTY, 8: EMPTY, 9: EMPTY,
          4: EMPTY, 5: EMPTY, 6: EMPTY, 
          1: EMPTY, 2: EMPTY, 3: EMPTY}
 
-wining_lines = [
+winning_lines = [
     {7, 8, 9}, # up row 
     {4, 5, 6}, # center row
     {1, 2, 3}, # bottom row
@@ -68,7 +68,7 @@ def check_all_lines(mark: str) -> list:
     """
     return [
         (n, sum([table[cell] == mark for cell in line]))
-        for n, line in enumerate(wining_lines)
+        for n, line in enumerate(winning_lines)
         ]
 
 
@@ -94,7 +94,7 @@ def proceed_turn(choice: int, gamer: set) -> bool:
         table[choice] = gamer['mark']
 
         if (l := is_winner(gamer['mark'])) is not None:
-            for cell in wining_lines[l]:
+            for cell in winning_lines[l]:
                 table[cell] = gamer['mark'].upper()
             draw_table()
             print (f"{gamer['name']} is winner!!!")
@@ -145,32 +145,34 @@ def robot_turn() -> int:
     sorted_users_lines = sorted(check_all_lines(USER['mark']), key=lambda item : item[1], reverse=True)
     sorted_robots_lines = sorted(check_all_lines(ROBOT['mark']), key=lambda item : item[1], reverse=True)
 
-    # loking for robot's 2 marks line and win
+    # looking for robot's 2 marks line and win
 
     for l_number in [line[LINE] for line in sorted_robots_lines if line[N_MARKS] == 2]:
-        for cell in wining_lines[l_number]:
+        for cell in winning_lines[l_number]:
             if table[cell] == EMPTY:
                 return cell
 
-    # loking for human's 2 marks line and protect
+    # looking for human's 2 marks line and protect
     # also if found a fork it can gave up if flag is set
 
-    defeat_cell = None
+    protect_cell = None
 
     for l_number in [line[LINE] for line in sorted_users_lines if line[N_MARKS] == 2]:
-        for cell in wining_lines[l_number]:
+        for cell in winning_lines[l_number]:
             if table[cell] == EMPTY:
                 if DO_ROBOT_GAVE_UP:
-                    if defeat_cell:
+                    if protect_cell:
                         return 0
                     else:
-                        defeat_cell = cell
+                        protect_cell = cell
                 else:
                     return cell
-    if defeat_cell:
-        return defeat_cell
+    if protect_cell:
+        return protect_cell
 
     # make choice to random free cell
+
+    # TODO: не ставить если есть в линии враги 
 
     return random.choice([cell[CELL_NUMBER] for cell in table.items() if cell[CELL_VALUE] == EMPTY])
 
