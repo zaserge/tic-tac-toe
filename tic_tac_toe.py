@@ -56,8 +56,6 @@ winning_lines = [
 
 def draw_table():
     """Draw game's table
-
-    @return None
     """
     print("┌───────┐")
     print(f"│ {TABLE[7]} {TABLE[8]} {TABLE[9]} │")
@@ -67,11 +65,13 @@ def draw_table():
 
 
 def check_all_lines(mark: str) -> list:
-    """Check all lines
+    """Check all lines for matching with player's mark
 
-    @param mark {str} Mark to search at table
+    Args:
+        mark (str): Player's mark
 
-    @return List of tuples (number line, matched marks number)
+    Returns:
+        list: List of tuples (number line, matched marks number)
     """
     return [
         (n, sum([TABLE[cell] == mark for cell in line]))
@@ -82,9 +82,11 @@ def check_all_lines(mark: str) -> list:
 def is_winner(mark: str) -> int:
     """Check if any line contains 3 matches
 
-    @param mark {str} Mark to search at table
+    Args:
+        mark (str): Player's mark
 
-    @return Line number or None
+    Returns:
+        int: Line number or None
     """
     sorted_lines = sorted(
         check_all_lines(mark), key=lambda item: item[N_MARKS], reverse=True
@@ -92,26 +94,28 @@ def is_winner(mark: str) -> int:
     return sorted_lines[0][LINE] if sorted_lines[0][N_MARKS] == 3 else None
 
 
-def proceed_turn(choice: int, gamer: dict) -> bool:
+def proceed_turn(choice: int, player: dict) -> bool:
     """Do game
 
-    @param choice {int} Gamer's choice
-    @param gamer {dict} Gamer's name and mark
+    Args:
+        choice (int): Player's move/choice
+        player (dict): Player's name and mark
 
-    @return True if game ends otherwise False
+    Returns:
+        bool: True if game ends otherwise False
     """
     if choice == 0:
         draw_table()
-        print(f"{gamer['name']} gave up")
+        print(f"{player['name']} gave up")
         return True
     else:
-        TABLE[choice] = gamer["mark"]
+        TABLE[choice] = player["mark"]
 
-        if (line_number := is_winner(gamer["mark"])) is not None:
+        if (line_number := is_winner(player["mark"])) is not None:
             for cell in winning_lines[line_number]:
-                TABLE[cell] = gamer["mark"].upper()
+                TABLE[cell] = player["mark"].upper()
             draw_table()
-            print(f"{gamer['name']} wins!!!")
+            print(f"{player['name']} wins!!!")
             return True
 
     # if no free cell then a draw
@@ -126,9 +130,10 @@ def proceed_turn(choice: int, gamer: dict) -> bool:
 
 
 def user_turn() -> int:
-    """Read user choice and do some basic checks
+    """Read user input and do some basic checks
 
-    @return Choice
+    Returns:
+        int: User's move/choice
     """
     while True:
         choice = input("You choice (1-9 for turn, 0 for exit):")
@@ -154,9 +159,10 @@ DO_ROBOT_GAVE_UP = False
 
 
 def robot_turn() -> int:
-    """! Make robot choice. very basic ai
+    """Make robot choice. very basic ai
 
-    @return Choice
+    Returns:
+        int: Robor's move/choice
     """
     sorted_users_lines = sorted(
         check_all_lines(USER["mark"]), key=lambda item: item[1], reverse=True
